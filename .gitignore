@@ -1,0 +1,13 @@
+# IDEs directories
+.idea
+.vscode
+
+# Binary-files
+*.exe
+
+# Images (icons)
+*.png
+*.jpg
+
+# Configs
+*.json
