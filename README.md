@@ -1,4 +1,8 @@
-Формат конфигурационного файла `config.json`:
+### Build an executable file
+#### for Windows:
+`go build -ldflags -H=windowsgui`
+
+### Configuration file `config.json` with the following contents:
 ```
 [
   {
