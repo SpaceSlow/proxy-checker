@@ -91,7 +91,13 @@ func main() {
 
 	labels := make([]*widget.Label, 0, len(cfg.Proxies))
 	for _, p := range cfg.Proxies {
-		labels = append(labels, widget.NewLabel(fmt.Sprintf("%s (%s)", p.Name, p.Host)))
+		var label *widget.Label
+		if p.Host == "" {
+			label = widget.NewLabel(p.Name)
+		} else {
+			label = widget.NewLabel(fmt.Sprintf("%s (%s)", p.Name, p.Host))
+		}
+		labels = append(labels, label)
 	}
 
 	circles := make([]*canvas.Circle, 0, len(cfg.Proxies))
