@@ -62,16 +62,14 @@ func changeStatus(address string, p *Proxy, circle *canvas.Circle) {
 	circle.Show()
 }
 
-func checkAddress(address string, circles []*canvas.Circle) {
-	if !strings.HasPrefix(address, "https://") {
+func checkAddress(address string, proxies []*Proxy, circles []*canvas.Circle) {
+	if !strings.HasPrefix(address, "https://") && !strings.HasPrefix(address, "http://") {
 		address = "https://" + address
 	}
-	for i, p := range cfg.Proxies {
+	for i, p := range proxies {
 		go changeStatus(address, p, circles[i])
 	}
 }
-
-var cfg Config
 
 func main() {
 	app := app.New()
@@ -85,6 +83,7 @@ func main() {
 		return
 	}
 
+	var cfg Config
 	err = json.Unmarshal(data, &cfg.Proxies)
 	if err != nil {
 		fmt.Errorf("incorrect config: %w", err)
@@ -109,10 +108,10 @@ func main() {
 
 	check := widget.NewButton("Check...", func() {
 		address := addressInput.Text
-		go checkAddress(address, circles)
+		go checkAddress(address, cfg.Proxies, circles)
 	})
 	addressInput.OnSubmitted = func(address string) {
-		go checkAddress(address, circles)
+		go checkAddress(address, cfg.Proxies, circles)
 	}
 	addressInput.OnChanged = func(_ string) {
 		for i := range circles {
