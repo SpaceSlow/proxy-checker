@@ -116,11 +116,11 @@ func main() {
 		go checkAddress(address, proxies, circles)
 	}
 	addressInput.OnChanged = func(_ string) {
-		for i := range circles {
-			i := i
-			go func() {
-				circles[i].StrokeColor = color.White
-			}()
+		for _, c := range circles {
+			go func(c *canvas.Circle) {
+				c.StrokeColor = color.White
+				c.Show()
+			}(c)
 		}
 	}
 
