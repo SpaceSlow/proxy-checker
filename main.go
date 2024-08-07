@@ -3,18 +3,19 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/app"
-	"fyne.io/fyne/v2/canvas"
-	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/layout"
-	"fyne.io/fyne/v2/widget"
 	"image/color"
 	"net/http"
 	"net/url"
 	"os"
 	"strings"
 	"time"
+
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/widget"
 )
 
 type User struct {
@@ -26,10 +27,6 @@ type Proxy struct {
 	Host string `json:"host"`
 	Name string `json:"name"`
 	User *User  `json:"user"`
-}
-
-type Config struct {
-	Proxies []*Proxy
 }
 
 func checkAddr(addr string, p *Proxy) error {
@@ -83,14 +80,14 @@ func main() {
 		return
 	}
 
-	var cfg Config
-	err = json.Unmarshal(data, &cfg.Proxies)
+	var proxies []*Proxy
+	err = json.Unmarshal(data, &proxies)
 	if err != nil {
 		fmt.Errorf("incorrect config: %w", err)
 	}
 
-	labels := make([]*widget.Label, 0, len(cfg.Proxies))
-	for _, p := range cfg.Proxies {
+	labels := make([]*widget.Label, 0, len(proxies))
+	for _, p := range proxies {
 		var label *widget.Label
 		if p.Host == "" {
 			label = widget.NewLabel(p.Name)
@@ -100,9 +97,9 @@ func main() {
 		labels = append(labels, label)
 	}
 
-	circles := make([]*canvas.Circle, 0, len(cfg.Proxies))
+	circles := make([]*canvas.Circle, 0, len(proxies))
 
-	for range cfg.Proxies {
+	for range proxies {
 		c := canvas.NewCircle(color.White)
 		c.StrokeColor = color.White
 		c.StrokeWidth = 5
@@ -114,10 +111,10 @@ func main() {
 
 	check := widget.NewButton("Check...", func() {
 		address := addressInput.Text
-		go checkAddress(address, cfg.Proxies, circles)
+		go checkAddress(address, proxies, circles)
 	})
 	addressInput.OnSubmitted = func(address string) {
-		go checkAddress(address, cfg.Proxies, circles)
+		go checkAddress(address, proxies, circles)
 	}
 	addressInput.OnChanged = func(_ string) {
 		for i := range circles {
@@ -129,7 +126,7 @@ func main() {
 	}
 
 	vBox := container.NewVBox(addressInput)
-	for i := range cfg.Proxies {
+	for i := range proxies {
 		vBox.Add(container.NewHBox(labels[i], layout.NewSpacer(), circles[i]))
 	}
 
