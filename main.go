@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"image/color"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -73,13 +74,15 @@ func main() {
 
 	data, err := os.ReadFile("config.json")
 	if err != nil {
-		return
+		log.Fatalf("config file is missing or reading file error: %v", err)
 	}
 
 	var proxies []*Proxy
 	err = json.Unmarshal(data, &proxies)
 	if err != nil {
-		fmt.Errorf("incorrect config: %w", err)
+		log.Fatal("empty config file or incorrect config. see README.md")
+	} else if len(proxies) == 0 {
+		log.Fatal("proxy servers is missing")
 	}
 
 	labels := make([]*widget.Label, 0, len(proxies))
