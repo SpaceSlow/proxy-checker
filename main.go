@@ -10,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
@@ -72,9 +71,6 @@ func main() {
 	app := app.New()
 	w := app.NewWindow("Proxy Checker")
 
-	w.Resize(fyne.NewSize(330, 330))
-	w.SetFixedSize(true)
-
 	data, err := os.ReadFile("config.json")
 	if err != nil {
 		return
@@ -132,5 +128,7 @@ func main() {
 
 	vBox.Add(check)
 	w.SetContent(vBox)
+	w.Resize(vBox.Size())
+	w.SetFixedSize(true)
 	w.ShowAndRun()
 }
